@@ -64,19 +64,28 @@ export function isSameUname(u1: string | undefined, u2: string | undefined): boo
 let cachedCloudMode: boolean | null = null;
 
 /**
- * Fetch and check if the backend server connects to Google Sheets via secure environment variables.
+ * Fetch and check if the backend server or client overrides connect to Google Sheets.
  */
 export async function checkCloudConnection(): Promise<boolean> {
   if (cachedCloudMode !== null) {
     return cachedCloudMode;
   }
+
+  // 1. Check client-side direct config (e.g., environment variable or localStorage for Vercel)
+  const clientUrl = ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL");
+  if (clientUrl && clientUrl.trim().startsWith("https://script.google.com/")) {
+    cachedCloudMode = true;
+    return true;
+  }
+
+  // 2. Query the full-stack server proxy as a fallback
   try {
     const res = await fetch("/api/connection-status");
     const json = await res.json();
     cachedCloudMode = !!json.connected;
     return cachedCloudMode;
   } catch (e) {
-    console.error("Failed to fetch backend connection status, falling back to local.", e);
+    console.debug("Backend server is offline (normal for static Vercel deployments), falling back to client-only flow.");
     cachedCloudMode = false;
     return false;
   }
@@ -87,20 +96,61 @@ export function isCloudMode(): boolean {
 }
 
 /**
- * Dummy config management for backward compatibility
+ * Get configured Apps Script URL
  */
 export function getAppsScriptUrl(): string {
-  return isCloudMode() ? "active" : "";
-}
-
-export function saveAppsScriptUrl(url: string) {
-  // No-op, configuration is handled exclusively in the backend environment.
+  return ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL") || "";
 }
 
 /**
- * General dynamic fetch handler proxying calls through the full-stack server
+ * Persist Apps Script URL to localStorage to connect on static platforms like Vercel
+ */
+export function saveAppsScriptUrl(url: string) {
+  const trimmed = url.trim();
+  if (trimmed) {
+    localStorage.setItem("VITE_APPS_SCRIPT_URL", trimmed);
+  } else {
+    localStorage.removeItem("VITE_APPS_SCRIPT_URL");
+  }
+  cachedCloudMode = null; // Reset cache to recheck connection mode
+}
+
+/**
+ * General dynamic fetch handler proxying calls through the full-stack server or directly to the Apps Script (useful for Vercel)
  */
 async function callAppsScript(action: string, data: any = {}, quiet: boolean = false): Promise<any> {
+  // Check if a direct client-side connection is available
+  const clientUrl = ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL");
+  
+  if (clientUrl && clientUrl.trim().startsWith("https://script.google.com/")) {
+    try {
+      // Use text/plain for cross-origin POST to avoid preflight CORS pre-requisite block
+      const response = await fetch(clientUrl.trim(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({ action, data })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      if (!json.success) {
+        throw new Error(json.error || "Execution failed on Google Script.");
+      }
+      return json.data;
+    } catch (error: any) {
+      if (!quiet) {
+        console.error("Direct client-to-sheet Apps Script call failed:", error);
+      }
+      throw new Error(`Cloud Direct API Error: ${error.message || error}`);
+    }
+  }
+
+  // Standard fallback to backend Proxy endpoint
   try {
     const response = await fetch("/api/apps-script", {
       method: "POST",
@@ -117,7 +167,7 @@ async function callAppsScript(action: string, data: any = {}, quiet: boolean = f
 
     const json = await response.json();
     if (!json.success) {
-      throw new Error(json.error || "Execution failed on Google Script backend.");
+      throw new Error(json.error || "Execution failed on Google Script backend proxy.");
     }
     return json.data;
   } catch (error: any) {

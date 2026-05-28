@@ -6,7 +6,9 @@ import {
   checkCloudConnection,
   seedRemoteSpreadsheet,
   diagnoseSpreadsheet,
-  SpreadsheetDiagnostics
+  SpreadsheetDiagnostics,
+  getAppsScriptUrl,
+  saveAppsScriptUrl
 } from "../api";
 import { User, UserRole } from "../types";
 import { 
@@ -72,6 +74,37 @@ export default function UsersView({ currentUser }: UsersViewProps) {
   const [diagLoading, setDiagLoading] = useState(false);
   const [diagData, setDiagData] = useState<SpreadsheetDiagnostics | null>(null);
   const [diagError, setDiagError] = useState<string | null>(null);
+
+  // Direct Apps Script Configuration
+  const [appsScriptUrlInput, setAppsScriptUrlInput] = useState(getAppsScriptUrl());
+  const [saveUrlSuccess, setSaveUrlSuccess] = useState<string | null>(null);
+
+  const handleSaveAppsScriptUrl = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaveUrlSuccess(null);
+    setErrorMsg(null);
+    try {
+      saveAppsScriptUrl(appsScriptUrlInput);
+      const connected = await checkCloudConnection();
+      setCloudConnected(connected);
+      setUsingRealAppsScript(connected);
+      if (connected) {
+        setSaveUrlSuccess("Google Sheets Web App URL successfully updated and connected! Cloud synchronization is fully operational.");
+        handleRunDiagnostics();
+        fetchUsers();
+      } else {
+        if (appsScriptUrlInput.trim() !== "") {
+          setErrorMsg("Apps Script URL updated, but connection validation failed. Please ensure the Apps Script URL is correct, is deployed as a Web App, and has 'Who has access' configured as 'Anyone'.");
+        } else {
+          setSaveUrlSuccess("Apps Script URL cleared. Operating on offline local state mode successfully.");
+          setDiagData(null);
+          fetchUsers();
+        }
+      }
+    } catch (err: any) {
+      setErrorMsg("Failed to update connection URL: " + err.message);
+    }
+  };
 
   useEffect(() => {
     fetchUsers(true);
@@ -722,6 +755,68 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               </>
             )}
           </div>
+        </div>
+
+        {/* Direct Apps Script URL Config (Perfect for Vercel / serverless deployments) */}
+        <div className="bg-indigo-50/25 p-5 rounded-2xl border border-indigo-100/65 space-y-4">
+          <div className="flex gap-2.5 items-start text-xs font-semibold text-indigo-950">
+            <Globe className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+            <div className="space-y-1 w-full text-left">
+              <h3 className="font-extrabold text-sky-950 text-sm">Direct Google Sheets Connection Settings</h3>
+              <p className="text-[11px] text-sky-600 font-medium leading-relaxed">
+                <strong>💡 Vercel / Static Deployment Quick Fix:</strong> When deployed on Vercel, the internal Express proxy server will not run automatically since Vercel only serves static assets. To bind real-time Google Sheets database, enter your <strong>Google Apps Script Web App URL</strong> below! It connects directly and securely from your browser.
+              </p>
+              <p className="text-[11px] text-sky-500 italic mt-1">
+                (Tip: You can also set it permanently by establishing the <code>VITE_APPS_SCRIPT_URL</code> environment variable in your Vercel Dashboard settings).
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveAppsScriptUrl} className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="grow">
+              <input
+                type="url"
+                required
+                placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+                value={appsScriptUrlInput}
+                onChange={e => setAppsScriptUrlInput(e.target.value)}
+                className="w-full px-4 py-2.5 bg-white border border-sky-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-550 rounded-xl text-xs font-semibold placeholder-sky-350 text-sky-950"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs tracking-wide rounded-xl transition-all shadow-md shadow-sky-600/15 cursor-pointer whitespace-nowrap"
+              >
+                Save & Connect
+              </button>
+              {appsScriptUrlInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAppsScriptUrlInput("");
+                    saveAppsScriptUrl("");
+                    setSaveUrlSuccess("Direct Apps Script URL cleared. Operating on offline local state mode.");
+                    checkCloudConnection().then(connected => {
+                      setCloudConnected(connected);
+                      setUsingRealAppsScript(connected);
+                      fetchUsers();
+                    });
+                  }}
+                  className="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold text-xs tracking-wide rounded-xl transition-all cursor-pointer whitespace-nowrap"
+                >
+                  Clear/Disconnect
+                </button>
+              )}
+            </div>
+          </form>
+
+          {saveUrlSuccess && (
+            <div className="text-[11px] font-semibold text-emerald-850 bg-emerald-50 p-3 border border-emerald-100 rounded-xl leading-relaxed flex items-start gap-2 text-left animate-fadeIn">
+              <span className="text-emerald-500 font-bold">✔</span>
+              <span>{saveUrlSuccess}</span>
+            </div>
+          )}
         </div>
 
         {/* Action Controls Row */}
