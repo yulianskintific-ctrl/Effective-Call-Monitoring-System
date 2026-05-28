@@ -1,0 +1,6 @@
+{
+  "name": "Effective Call Monitoring System",
+  "description": "A comprehensive system to monitor store visists, target schedules, effective calls (with transaction value / omzet check), and approval streams for field sales and supervisors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
