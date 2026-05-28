@@ -95,7 +95,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
       setUsers(usersData);
     } catch (err: any) {
       console.error("Failed fetching initial scheduler data:", err);
-      if (!silent) setErrorMsg("Gagal mengambil data penjadwalan: " + err.message);
+      if (!silent) setErrorMsg("Failed to fetch schedules data: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -141,13 +141,13 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formValues.username || !formValues.store_id || !formValues.visit_date) {
-      setErrorMsg("Harap lengkapi semua bidang isian (Salesperson, Toko, Tanggal Kunjungan)");
+      setErrorMsg("Please complete all input fields (Salesperson, Store, Visit Date)");
       return;
     }
 
     const matchedStore = outlets.find(o => o.store_id === formValues.store_id);
     if (!matchedStore) {
-      setErrorMsg("Toko terpilih tidak valid.");
+      setErrorMsg("Selected store is invalid.");
       return;
     }
 
@@ -165,14 +165,14 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
 
       showSuccess(
         isEditing 
-          ? `Jadwal kunjungan ke "${matchedStore.store_name}" berhasil diperbarui!` 
-          : `Tugas jadwal kunjungan baru ke "${matchedStore.store_name}" berhasil dibuat!`
+          ? `Visit schedule to "${matchedStore.store_name}" was successfully updated!` 
+          : `New visit schedule task to "${matchedStore.store_name}" was successfully created!`
       );
       
       setIsFormOpen(false);
       fetchInitialData();
     } catch (err: any) {
-      setErrorMsg("Gagal menyimpan jadwal kunjungan: " + err.message);
+      setErrorMsg("Failed to save visit schedule: " + err.message);
     } finally {
       setActionLoading(false);
     }
@@ -183,11 +183,11 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
       setActionLoading(true);
       setErrorMsg(null);
       await deleteSchedule(recordId);
-      showSuccess("Jadwal kunjungan berhasil dihapus / dibatalkan!");
+      showSuccess("Visit schedule was successfully deleted / cancelled!");
       setDeleteTargetId(null);
       fetchInitialData();
     } catch (err: any) {
-      setErrorMsg("Gagal membatalkan jadwal kunjungan: " + err.message);
+      setErrorMsg("Failed to cancel visit schedule: " + err.message);
     } finally {
       setActionLoading(false);
     }
@@ -203,7 +203,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
     
     // 1. If it's already exactly YYYY-MM-DD, return it as is
     if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-      return trimmed;
+       return trimmed;
     }
     
     // 2. If it contains ISO or timezone markers, parse it relative to the local user's calendar date
@@ -281,16 +281,16 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
             <Calendar className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-sky-950 font-sans tracking-tight">Perencanaan Jadwal Kunjungan (DDM Only)</h1>
-            <p className="text-xs text-sky-500 font-medium">Beri target, kelola rute, atau buat jadwal sales eksekutif berkala</p>
+            <h1 className="text-xl font-extrabold text-sky-950 font-sans tracking-tight">Visit Planner (DDM Only)</h1>
+            <p className="text-xs text-sky-500 font-medium font-sans">Assign targets, manage routes, or schedule regular sales executive assignments</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            onClick={fetchInitialData}
+            onClick={() => fetchInitialData()}
             className="p-2.5 bg-sky-50 text-indigo-700 hover:bg-sky-100 rounded-xl transition-all cursor-pointer font-bold border border-sky-100/60"
-            title="SINKRONKAN ULANG"
+            title="RESYNC SCHEDULES"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-indigo-600" : ""}`} />
           </button>
@@ -300,7 +300,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
             className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs tracking-wide transition-all shadow-md shadow-indigo-650/10 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>Tentukan Jadwal Baru</span>
+            <span>Schedule New Visit</span>
           </button>
         </div>
       </div>
@@ -330,13 +330,13 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
           {/* 1. Keyword Search */}
           <div className="space-y-1.5 text-left">
             <label className="block text-[10px] font-extrabold text-sky-500 uppercase tracking-widest">
-              🔎 Cari Kunjungan
+              🔎 Search Visits
             </label>
             <div className="relative">
               <Search className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Cari toko, ID, atau nama SE..."
+                placeholder="Search store, ID, or SE name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-9 pr-3 py-2.5 bg-sky-50/50 hover:bg-sky-50 focus:bg-white border border-sky-100 focus:border-indigo-500 rounded-xl outline-none transition-all font-bold text-xs text-sky-950 placeholder-sky-400"
@@ -348,7 +348,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
           <div className="space-y-1.5 text-left">
             <div className="flex items-center justify-between">
               <label className="block text-[10px] font-extrabold text-sky-500 uppercase tracking-widest">
-                📅 Tanggal Kunjungan (visit_date)
+                📅 Visit Date (visit_date)
               </label>
               {selectedDateFilter && (
                 <button
@@ -356,7 +356,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                   onClick={() => setSelectedDateFilter("")}
                   className="text-[9px] font-extrabold text-indigo-650 hover:text-indigo-800 uppercase tracking-wide cursor-pointer hover:underline"
                 >
-                  Lihat Semua Tanggal
+                  View All Dates
                 </button>
               )}
             </div>
@@ -378,7 +378,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
               onChange={(e) => setSelectedSeFilter(e.target.value)}
               className="w-full px-3 py-2.5 bg-sky-55/50 hover:bg-sky-50 focus:bg-white border border-sky-100 focus:border-indigo-500 rounded-xl outline-none transition-all font-bold text-xs text-sky-900 cursor-pointer"
             >
-              <option value="ALL">Semua Sales Executive (ALL)</option>
+              <option value="ALL">All Sales Executives (ALL)</option>
               {salespersons.map(se => {
                 const countForSe = schedules.filter(s => 
                   isSameUname(s.username, se.username) && 
@@ -386,7 +386,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                 ).length;
                 return (
                   <option key={se.username} value={se.username}>
-                    {se.name} (@{se.username}) — {countForSe} Jadwal
+                    {se.name} (@{se.username}) — {countForSe} Schedules
                   </option>
                 );
               })}
@@ -401,16 +401,16 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
       {deleteTargetId && (
         <div className="fixed inset-0 bg-sky-950/40 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-sky-100 animate-scaleUp">
-            <div className="flex items-center gap-3 text-rose-600 mb-4">
+            <div className="flex items-center gap-3 text-rose-600 mb-4 font-sans">
               <div className="h-10 w-10 rounded-xl bg-rose-50 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5 text-rose-600 animate-pulse" />
               </div>
-              <h3 className="text-base font-extrabold font-sans">Batalkan Kunjungan Jadwal</h3>
+              <h3 className="text-base font-extrabold">Cancel Scheduled Visit</h3>
             </div>
             
-            <p className="text-xs text-sky-905 leading-relaxed mb-6">
-              Apakah Anda yakin ingin membatalkan target jadwal kunjungan ini? 
-              Tindakan ini akan menghapusnya secara langsung dari rute harian Sales Executive yang bersangkutan.
+            <p className="text-xs text-sky-905 leading-relaxed mb-6 font-medium">
+              Are you sure you want to cancel this scheduled visit?
+              This action will remove it directly from the daily route of the respective Sales Executive.
             </p>
 
             <div className="flex items-center justify-end gap-2">
@@ -420,7 +420,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                 className="px-4 py-2 bg-sky-50 text-sky-850 hover:bg-sky-100 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
                 disabled={actionLoading}
               >
-                Kembali
+                Back
               </button>
               <button
                 type="button"
@@ -428,7 +428,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                 className="px-4 py-2 bg-rose-600 text-white hover:bg-rose-700 text-xs font-extrabold rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-md shadow-rose-650/10"
                 disabled={actionLoading}
               >
-                {actionLoading ? "Mencabut..." : "Ya, Cabut Jadwal"}
+                {actionLoading ? "Revoking..." : "Yes, Revoke Schedule"}
               </button>
             </div>
           </div>
@@ -442,16 +442,16 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
             
             {/* Header */}
             <div className="p-6 border-b border-sky-100 flex items-center justify-between bg-sky-50/50">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 font-sans">
                 <div className="h-10 w-10 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-bold">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-sky-950 font-sans tracking-tight">
-                    {isEditing ? "Perbarui Jadwal Kunjungan" : "Tentukan Jadwal Kunjungan"}
+                  <h3 className="font-extrabold text-sm text-sky-950 tracking-tight">
+                    {isEditing ? "Update Visit Schedule" : "Assign Visit Schedule"}
                   </h3>
                   <p className="text-[10px] text-sky-500 font-bold uppercase tracking-wide">
-                    {isEditing ? `Modifikasi Jadwal ID: ${editingRecordId}` : "Beri tugas sales executive baru"}
+                    {isEditing ? `Modify Schedule ID: ${editingRecordId}` : "Assign new sales executive task"}
                   </p>
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
               {/* Select Salesperson */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                  Salesperson Pelaksana *
+                  Assigned Salesperson *
                 </label>
                 <div className="relative">
                   <UserIcon className="w-4 h-4 text-sky-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -481,7 +481,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                     className="w-full pl-9 pr-3 py-2.5 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-indigo-500 rounded-xl outline-none transition-all font-bold text-sky-900 cursor-pointer"
                     required
                   >
-                    <option value="">-- Pilih Sales Executive (SE) --</option>
+                    <option value="">-- Select Sales Executive (SE) --</option>
                     {salespersons.map(s => (
                       <option key={s.username} value={s.username}>
                         {s.name} (@{s.username})
@@ -494,7 +494,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
               {/* Select Target Outlet/Store */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                  Toko / Outlet Tujuan *
+                  Target Store / Outlet *
                 </label>
                 <div className="relative">
                   <Building className="w-4 h-4 text-sky-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -505,7 +505,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                     className="w-full pl-9 pr-3 py-2.5 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-indigo-500 rounded-xl outline-none transition-all font-bold text-sky-900 cursor-pointer"
                     required
                   >
-                    <option value="">-- Pilih Toko dari Database --</option>
+                    <option value="">-- Select Store from Database --</option>
                     {outlets.map(o => (
                       <option key={o.store_id} value={o.store_id}>
                         {o.store_name} ({o.store_id})
@@ -514,10 +514,10 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                   </select>
                 </div>
                 {formValues.store_id && (
-                  <div className="mt-2.5 p-3 bg-sky-50/50 border border-sky-100 rounded-xl flex items-start gap-2.5 text-[10px] text-sky-650 leading-relaxed font-semibold">
+                  <div className="mt-2.5 p-3 bg-sky-50/50 border border-sky-100 rounded-xl flex items-start gap-2.5 text-[10px] text-sky-655 leading-relaxed font-semibold">
                     <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
                     <span>
-                      Alamat: {outlets.find(o => o.store_id === formValues.store_id)?.address || "-"}
+                      Address: {outlets.find(o => o.store_id === formValues.store_id)?.address || "-"}
                     </span>
                   </div>
                 )}
@@ -526,7 +526,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
               {/* Select Tarjet Date */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                  Tanggal Direncanakan *
+                  Planned Date *
                 </label>
                 <input
                   type="date"
@@ -542,7 +542,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
               {cloudConnected && (
                 <div className="p-3 bg-indigo-50 border border-indigo-100/50 rounded-xl flex items-start gap-2 text-[10px] font-bold text-indigo-700 leading-normal">
                   <RefreshCw className="w-3.5 h-3.5 mt-0.5 animate-spin text-indigo-500 shrink-0" />
-                  <span>Jadwal ini akan langsung dikirim & ditambahkan ke live Google Spreadsheet database.</span>
+                  <span>This schedule will be instantly submitted & appended to the live Google Spreadsheet.</span>
                 </div>
               )}
 
@@ -556,7 +556,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                 className="px-4 py-2 bg-white hover:bg-sky-50 text-sky-850 text-xs font-bold rounded-xl border border-sky-100 transition-all cursor-pointer"
                 disabled={actionLoading}
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -565,7 +565,7 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                 disabled={actionLoading}
               >
                 <Save className="w-4 h-4" />
-                <span>{actionLoading ? "Menyimpan..." : "Simpan Jadwal"}</span>
+                <span>{actionLoading ? "Saving..." : "Save Schedule"}</span>
               </button>
             </div>
 
@@ -577,15 +577,15 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
       {filteredSchedules.length === 0 ? (
         <div className="bg-white rounded-2xl border border-sky-100 shadow-sm p-12 text-center flex flex-col items-center justify-center">
           <Calendar className="w-12 h-12 text-sky-200 mb-3" />
-          <h3 className="text-sm font-extrabold text-sky-950 font-sans">Tidak Ada Jadwal Kunjungan</h3>
-          <p className="text-xs text-sky-400 mt-1 max-w-sm mx-auto">
-            Tidak ditemukan rencana kunjungan yang memenuhi kriteria pencarian atau filter Anda saat ini.
+          <h3 className="text-sm font-extrabold text-sky-950 font-sans">No Scheduled Visits</h3>
+          <p className="text-xs text-sky-450 mt-1 max-w-sm mx-auto font-medium">
+            No planned scheduled visits found matching your filter selections or queries.
           </p>
           <button
             onClick={handleOpenAddForm}
             className="mt-4 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs rounded-xl cursor-pointer"
           >
-            Buat Jadwal Pertama
+            Create First Schedule
           </button>
         </div>
       ) : (
@@ -597,9 +597,9 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
               <thead>
                 <tr className="bg-sky-50/50 border-b border-sky-100/80 text-[10px] uppercase tracking-wider font-extrabold text-sky-500">
                   <th className="px-6 py-4 font-black">Sales Executive</th>
-                  <th className="px-6 py-4 font-black">Toko Tujuan</th>
-                  <th className="px-6 py-4 font-black">Alamat</th>
-                  <th className="px-6 py-4 text-right font-black">Tindakan</th>
+                  <th className="px-6 py-4 font-black">Target Store</th>
+                  <th className="px-6 py-4 font-black">Address</th>
+                  <th className="px-6 py-4 text-right font-black">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sky-50 font-sans text-xs font-medium text-sky-905">
@@ -642,14 +642,14 @@ export default function SchedulesView({ currentUser }: SchedulesViewProps) {
                           <button
                             onClick={() => handleOpenEditForm(sch)}
                             className="p-1.5 text-sky-500 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 rounded-lg transition-all cursor-pointer"
-                            title="UBAH JADWAL"
+                            title="EDIT SCHEDULE"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => setDeleteTargetId(sch.record_id)}
                             className="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all cursor-pointer"
-                            title="HAPUS/BATALKAN JADWAL"
+                            title="DELETE/CANCEL SCHEDULE"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

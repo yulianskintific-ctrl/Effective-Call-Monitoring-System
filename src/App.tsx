@@ -88,19 +88,19 @@ export default function App() {
   const menuItems = [
     {
       id: "users",
-      label: "Manajemen Akun",
+      label: "User Accounts",
       icon: Users,
       roles: ["ADMIN"]
     },
     {
       id: "schedules",
-      label: "Jadwal Kunjungan",
+      label: "Visit Schedules",
       icon: Calendar,
       roles: ["DDM", "ADMIN"]
     },
     {
       id: "dashboard",
-      label: "Dashboard KPI",
+      label: "KPI Dashboard",
       icon: LayoutGrid,
       roles: ["SE", "SPV", "ASM", "DDM", "ADMIN"]
     },

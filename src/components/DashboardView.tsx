@@ -100,7 +100,7 @@ export default function DashboardView({ currentUser, setActivePage }: DashboardV
 
     const sortedDates = Object.keys(groups).sort();
     return sortedDates.map(d => ({
-      date: new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short" }),
+      date: new Date(d).toLocaleDateString("en-US", { day: "numeric", month: "short" }),
       "Total Visits": groups[d].total,
       "Effective Calls": groups[d].effective
     }));
@@ -187,14 +187,14 @@ export default function DashboardView({ currentUser, setActivePage }: DashboardV
       {/* Rejection Notification Banner */}
       {currentUser.role === "SE" && visits.some(v => v.approval_status === "REJECTED") && (
         <div className="bg-rose-50 border border-rose-100 p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fadeIn shadow-xs">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 text-left">
             <div className="h-11 w-11 bg-rose-100 rounded-xl flex items-center justify-center text-rose-650 shrink-0">
               <AlertCircle className="w-6 h-6 animate-pulse" />
             </div>
-            <div className="text-left">
-              <h3 className="font-extrabold text-sm text-rose-950 font-sans tracking-tight">Pengajuan Kunjungan Ditolak / Perlu Revisi</h3>
+            <div>
+              <h3 className="font-extrabold text-sm text-rose-955 font-sans tracking-tight">Visit Submission Rejected / Needs Revision</h3>
               <p className="text-xs text-rose-700 font-medium leading-relaxed mt-1">
-                Terdapat <strong>{visits.filter(v => v.approval_status === "REJECTED").length} laporan kunjungan toko</strong> Anda yang ditolak atau diberi catatan koreksi oleh supervisor. Harap segera perbaiki laporan tersebut agar dapat diajukan kembali ke alur persetujuan.
+                There are <strong>{visits.filter(v => v.approval_status === "REJECTED").length} of your store visit reports</strong> rejected or marked with correction notes by your supervisor. Please edit and resolve them so they can be resubmitted to the approval pipeline.
               </p>
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function DashboardView({ currentUser, setActivePage }: DashboardV
               onClick={() => setActivePage("revision")}
               className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer shadow-sm shrink-0 uppercase tracking-wide inline-flex items-center gap-1.5"
             >
-              Buka Menu Revisi &rarr;
+              Open Revision Menu &rarr;
             </button>
           )}
         </div>

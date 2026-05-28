@@ -106,13 +106,13 @@ export default function UsersView({ currentUser }: UsersViewProps) {
     setSeedSuccess(null);
     try {
       await seedRemoteSpreadsheet();
-      setSeedSuccess("Berhasil melakukan inisialisasi / seeding data default ke Google Sheet Anda! Akun demo dan struktur dasar master data siap digunakan.");
+      setSeedSuccess("Successfully initialized / seeded default data to your Google Sheet! Demo accounts and master data structures are ready to use.");
       // Refresh user list after seed to show the newly seeded accounts
       fetchUsers();
       // Also re-run diagnostics
       handleRunDiagnostics();
     } catch (err: any) {
-      setErrorMsg("Gagal melakukan seeding: " + (err?.message || err));
+      setErrorMsg("Failed to seed: " + (err?.message || err));
     } finally {
       setSeeding(false);
     }
@@ -127,7 +127,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
       setDiagData(data);
     } catch (err: any) {
       console.error(err);
-      setDiagError(err?.message || "Gagal menghubungi API Diagnostik Google Apps Script.");
+      setDiagError(err?.message || "Failed to contact Google Apps Script Diagnostics API.");
     } finally {
       setDiagLoading(false);
     }
@@ -141,7 +141,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
       setUsers(data);
     } catch (err: any) {
       console.error(err);
-      if (!silent) setErrorMsg("Gagal mengambil data akun: " + err.message);
+      if (!silent) setErrorMsg("Failed to fetch accounts data: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -193,7 +193,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formValues.username || !formValues.name || !formValues.role) {
-      setErrorMsg("Harap lengkapi semua field wajib (Username, Nama, Role)");
+      setErrorMsg("Please fill in all required fields (Username, Name, Role)");
       return;
     }
 
@@ -213,11 +213,11 @@ export default function UsersView({ currentUser }: UsersViewProps) {
 
       await saveUser(userToSave, !isEditing);
       
-      showSuccess(isEditing ? `Akun "${formValues.username}" berhasil diperbarui!` : `Akun baru "${formValues.username}" berhasil ditambahkan!`);
+      showSuccess(isEditing ? `Account "${formValues.username}" successfully updated!` : `New account "${formValues.username}" successfully added!`);
       setIsFormOpen(false);
       fetchUsers();
     } catch (err: any) {
-      setErrorMsg("Gagal menyimpan akun: " + err.message);
+      setErrorMsg("Failed to save account: " + err.message);
     } finally {
       setActionLoading(false);
     }
@@ -228,11 +228,11 @@ export default function UsersView({ currentUser }: UsersViewProps) {
       setActionLoading(true);
       setErrorMsg(null);
       await deleteUser(username);
-      showSuccess(`Akun "${username}" berhasil dihapus!`);
+      showSuccess(`Account "${username}" successfully deleted!`);
       setDeleteTarget(null);
       fetchUsers();
     } catch (err: any) {
-      setErrorMsg("Gagal menghapus akun: " + err.message);
+      setErrorMsg("Failed to delete account: " + err.message);
     } finally {
       setActionLoading(false);
     }
@@ -273,16 +273,16 @@ export default function UsersView({ currentUser }: UsersViewProps) {
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-sky-950 font-sans tracking-tight">Manajemen Akun Pengguna</h1>
-            <p className="text-xs text-sky-500 font-medium">Tambah, edit, atau hapus kredensial sales & supervisor</p>
+            <h1 className="text-xl font-extrabold text-sky-950 font-sans tracking-tight">User Account Management</h1>
+            <p className="text-xs text-sky-500 font-medium font-sans">Add, edit, or delete credentials for sales & supervisor teams</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            onClick={fetchUsers}
+            onClick={() => fetchUsers()}
             className="p-2.5 bg-sky-50 text-sky-700 hover:bg-sky-100 rounded-xl transition-all cursor-pointer font-bold border border-sky-100/60"
-            title="SINKRONKAN / REFRESH"
+            title="SYNC / REFRESH"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-sky-550" : ""}`} />
           </button>
@@ -292,7 +292,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
             className="flex items-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-bold text-xs tracking-wide transition-all shadow-md shadow-sky-600/10 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>Tambah Akun Baru</span>
+            <span>Add New Account</span>
           </button>
         </div>
       </div>
@@ -319,7 +319,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
           <Search className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
-            placeholder="Cari berdasarkan nama, username, wilayah, atau cabang..."
+            placeholder="Search by name, username, region, or branch..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 text-xs bg-sky-50/50 hover:bg-sky-50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-medium text-sky-950 placeholder-sky-400"
@@ -332,7 +332,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="w-full px-3.5 py-2 text-xs bg-sky-50/50 hover:bg-sky-50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-bold text-sky-850 cursor-pointer"
           >
-            <option value="ALL">Semua Jabatan (Role)</option>
+            <option value="ALL">All Roles</option>
             <option value="ADMIN">ADMIN - Administrator</option>
             <option value="DDM">DDM - Distributor Development Manager</option>
             <option value="ASM">ASM - Area Sales Manager</option>
@@ -343,7 +343,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
 
         <div className="md:col-span-2 flex items-center justify-end">
           <span className="text-[10px] font-extrabold text-sky-500 tracking-wider">
-            {filteredUsers.length} AKUN DITEMUKAN
+            {filteredUsers.length} ACCOUNTS FOUND
           </span>
         </div>
       </div>
@@ -352,16 +352,16 @@ export default function UsersView({ currentUser }: UsersViewProps) {
       {deleteTarget && (
         <div className="fixed inset-0 bg-sky-950/40 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-sky-100 animate-scaleUp">
-            <div className="flex items-center gap-3 text-rose-600 mb-4">
+            <div className="flex items-center gap-3 text-rose-600 mb-4 font-sans">
               <div className="h-10 w-10 rounded-xl bg-rose-50 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5 text-rose-600 animate-pulse" />
               </div>
-              <h3 className="text-base font-extrabold font-sans">Konfirmasi Hapus Akun</h3>
+              <h3 className="text-base font-extrabold">Confirm Account Deletion</h3>
             </div>
             
-            <p className="text-xs text-sky-900 leading-relaxed mb-6">
-              Apakah Anda benar-benar ingin menghapus pengguna dengan username <strong className="text-sky-950">"{deleteTarget}"</strong>? 
-              Tindakan ini permanen dan akan menghapus kredensial login mereka secara langsung dari pangkalan data.
+            <p className="text-xs text-sky-900 leading-relaxed mb-6 font-medium">
+              Are you sure you want to delete the user with username <strong className="text-sky-950">"{deleteTarget}"</strong>? 
+              This action is permanent and will remove their login credentials directly from the database schema.
             </p>
 
             <div className="flex items-center justify-end gap-2">
@@ -371,7 +371,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                 className="px-4 py-2 bg-sky-50 text-sky-800 hover:bg-sky-100 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
                 disabled={actionLoading}
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -379,7 +379,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                 className="px-4 py-2 bg-rose-600 text-white hover:bg-rose-700 text-xs font-extrabold rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-md shadow-rose-650/10"
                 disabled={actionLoading}
               >
-                {actionLoading ? "Menghapus..." : "Ya, Hapus Akun"}
+                {actionLoading ? "Deleting..." : "Yes, Delete Account"}
               </button>
             </div>
           </div>
@@ -393,16 +393,16 @@ export default function UsersView({ currentUser }: UsersViewProps) {
             
             {/* Form Header */}
             <div className="p-6 border-b border-sky-100 flex items-center justify-between bg-sky-50/50">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 font-sans">
                 <div className="h-10 w-10 bg-sky-100 rounded-xl flex items-center justify-center text-sky-700">
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-sky-950 font-sans tracking-tight">
-                    {isEditing ? "Ubah Profil Akun" : "Daftarkan Akun Baru"}
+                  <h3 className="font-extrabold text-sm text-sky-950 tracking-tight">
+                    {isEditing ? "Edit Account Profile" : "Register New Account"}
                   </h3>
                   <p className="text-[10px] text-sky-500 font-bold uppercase tracking-wide">
-                    {isEditing ? `username: ${formValues.username}` : "isi formulir di bawah"}
+                    {isEditing ? `username: ${formValues.username}` : "fill in the form below"}
                   </p>
                 </div>
               </div>
@@ -430,14 +430,14 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     name="username"
                     value={formValues.username}
                     onChange={handleInputChange}
-                    placeholder="Contoh: se01 atau spv_jakarta"
+                    placeholder="e.g., se01 or spv_jakarta"
                     disabled={isEditing}
                     className="w-full pl-9 pr-4 py-2 text-xs bg-sky-50/50 disabled:bg-sky-100/70 disabled:text-sky-450 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-bold text-sky-950 placeholder-sky-400"
                     required
                   />
                 </div>
                 {!isEditing && (
-                  <p className="text-[9px] text-sky-400 mt-1 font-bold">Note: Username bersifat unik, tidak sensitif huruf besar/kecil.</p>
+                  <p className="text-[9px] text-sky-400 mt-1 font-bold">Note: Username must be unique and is case-insensitive.</p>
                 )}
               </div>
 
@@ -453,7 +453,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     name="password"
                     value={formValues.password}
                     onChange={handleInputChange}
-                    placeholder="Minimal 6 karakter"
+                    placeholder="At least 6 characters"
                     className="w-full pl-9 pr-4 py-2 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-mono font-bold text-sky-950 placeholder-sky-400"
                     required
                   />
@@ -463,14 +463,14 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               {/* Real Name */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                  Nama Lengkap *
+                  Full Name *
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formValues.name}
                   onChange={handleInputChange}
-                  placeholder="Contoh: Budi Santoso (Sales SE)"
+                  placeholder="e.g., John Doe (Sales Exec)"
                   className="w-full px-3.5 py-2 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-semibold text-sky-950 placeholder-sky-400"
                   required
                 />
@@ -479,7 +479,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               {/* Role Select */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-555 uppercase tracking-widest mb-1.5">
-                  Jabatan / Role *
+                  Role / Title *
                 </label>
                 <select
                   name="role"
@@ -500,7 +500,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               {formValues.role !== "ADMIN" && formValues.role !== "DDM" && (
                 <div>
                   <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                    Supervisor / Atasan Langsung
+                    Direct Supervisor
                   </label>
                   <select
                     name="supervisor_username"
@@ -508,7 +508,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-extrabold text-sky-900 cursor-pointer"
                   >
-                    <option value="">-- Hubungkan dengan Atasan --</option>
+                    <option value="">-- Connect with Supervisor --</option>
                     {availableSupervisors.map(u => (
                       <option key={u.username} value={u.username}>
                         {u.name} ({u.username})
@@ -516,9 +516,9 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     ))}
                   </select>
                   <p className="text-[9px] text-sky-400 mt-1 font-semibold leading-snug">
-                    {formValues.role === "SE" && "SE wajib melapor ke Supervisor (SPV)"}
-                    {formValues.role === "SPV" && "SPV wajib melapor ke Area Manager (ASM)"}
-                    {formValues.role === "ASM" && "ASM wajib melapor ke Deputy Manager (DDM)"}
+                    {formValues.role === "SE" && "SE must report to a Supervisor (SPV)"}
+                    {formValues.role === "SPV" && "SPV must report to an Area Manager (ASM)"}
+                    {formValues.role === "ASM" && "ASM must report to a Distributor Dev Manager (DDM)"}
                   </p>
                 </div>
               )}
@@ -526,7 +526,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               {/* Region field */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                  Wilayah / Region (Opsional)
+                  Region (Optional)
                 </label>
                 <div className="relative">
                   <MapPin className="w-4 h-4 text-sky-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -535,7 +535,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     name="region"
                     value={formValues.region}
                     onChange={handleInputChange}
-                    placeholder="Contoh: DKI Jakarta"
+                    placeholder="e.g., DKI Jakarta"
                     className="w-full pl-9 pr-4 py-2 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-semibold text-sky-950 placeholder-sky-400"
                   />
                 </div>
@@ -544,7 +544,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               {/* Branch field */}
               <div>
                 <label className="block text-[10px] font-extrabold text-sky-550 uppercase tracking-widest mb-1.5">
-                  Cabang / Branch (Opsional)
+                  Branch (Optional)
                 </label>
                 <div className="relative">
                   <Building className="w-4 h-4 text-sky-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -553,13 +553,11 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     name="branch"
                     value={formValues.branch}
                     onChange={handleInputChange}
-                    placeholder="Contoh: Jakarta Selatan"
+                    placeholder="e.g., South Jakarta"
                     className="w-full pl-9 pr-4 py-2 text-xs bg-sky-50/50 focus:bg-white border border-sky-100 focus:border-sky-500 rounded-xl outline-none transition-all font-semibold text-sky-950 placeholder-sky-400"
                   />
                 </div>
               </div>
-
-
 
             </form>
 
@@ -568,10 +566,10 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-4 py-2 bg-white hover:bg-sky-50 text-sky-800 text-xs font-bold rounded-xl border border-sky-100 transition-all cursor-pointer"
+                className="px-4 py-2 bg-white hover:bg-sky-50 text-sky-850 text-xs font-bold rounded-xl border border-sky-100 transition-all cursor-pointer"
                 disabled={actionLoading}
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -580,7 +578,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                 disabled={actionLoading}
               >
                 <Save className="w-4 h-4" />
-                <span>{actionLoading ? "Menyimpan..." : "Simpan Akun"}</span>
+                <span>{actionLoading ? "Saving..." : "Save Account"}</span>
               </button>
             </div>
 
@@ -592,14 +590,14 @@ export default function UsersView({ currentUser }: UsersViewProps) {
       {loading ? (
         <div className="bg-white rounded-2xl border border-sky-100 shadow-sm p-12 text-center flex flex-col items-center justify-center">
           <div className="h-10 w-10 border-4 border-sky-200 border-t-sky-600 rounded-full animate-spin mb-3"></div>
-          <span className="text-xs font-extrabold text-sky-600">Sedang memuat daftar pengguna, mohon tunggu...</span>
+          <span className="text-xs font-extrabold text-sky-600">Loading user list, please wait...</span>
         </div>
       ) : filteredUsers.length === 0 ? (
         <div className="bg-white rounded-2xl border border-sky-100 shadow-sm p-12 text-center flex flex-col items-center justify-center">
           <Users className="w-12 h-12 text-sky-300 mb-3" />
-          <h3 className="text-sm font-extrabold text-sky-950 font-sans">Tidak ada akun yang sesuai kriteria</h3>
-          <p className="text-xs text-sky-400 mt-1 max-w-sm mx-auto">
-            Silakan coba ubah kata kunci pencarian atau ubah filter jabatan Anda.
+          <h3 className="text-sm font-extrabold text-sky-950 font-sans">No matching accounts found</h3>
+          <p className="text-xs text-sky-400 mt-1 max-w-sm mx-auto font-medium">
+            Please try modifying search keywords or changing the role filter.
           </p>
         </div>
       ) : (
@@ -615,7 +613,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               >
                 {/* Upper Details */}
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-3.5">
+                  <div className="flex items-start justify-between gap-3 mb-3.5 font-sans">
                     {/* Role Indicator Badge */}
                     <span className={`text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                       u.role === "ADMIN" ? "bg-purple-100 text-purple-700" :
@@ -629,7 +627,7 @@ export default function UsersView({ currentUser }: UsersViewProps) {
 
                     {isSelf && (
                       <span className="text-[8px] bg-emerald-150 text-emerald-700 border border-emerald-200/50 font-extrabold px-1.5 py-0.5 rounded-lg">
-                        SAYA
+                        ME
                       </span>
                     )}
                   </div>
@@ -638,17 +636,17 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                   
                   <div className="mt-3 space-y-2 text-xs font-semibold text-sky-700">
                     <div className="flex items-center gap-1.5 text-[11px]">
-                      <span className="text-sky-400 font-extrabold font-mono text-[9px] w-14 block select-none">USERNAME:</span>
+                      <span className="text-sky-450 font-extrabold font-mono text-[9px] w-14 block select-none">USERNAME:</span>
                       <span className="text-sky-900 font-bold font-mono bg-sky-50 px-1.5 py-0.5 rounded text-[11px] font-medium">{u.username}</span>
                     </div>
 
                     <div className="flex items-center gap-1.5 text-[11px]">
-                      <span className="text-sky-400 font-extrabold font-mono text-[9px] w-14 block select-none">PASSWORD:</span>
+                      <span className="text-sky-450 font-extrabold font-mono text-[9px] w-14 block select-none">PASSWORD:</span>
                       <span className="text-sky-600 font-medium font-mono truncate">{u.password || "*********"}</span>
                     </div>
 
                     <div className="flex items-start gap-1.5 text-[11px] leading-relaxed">
-                      <span className="text-sky-400 font-extrabold font-mono text-[9px] w-14 block select-none">ATASAN:</span>
+                      <span className="text-sky-450 font-extrabold font-mono text-[9px] w-14 block select-none">SUPERVISOR:</span>
                       <span className="text-sky-900 leading-snug font-medium truncate flex-1">
                         {u.supervisor_username ? `@${u.supervisor_username}` : "-"}
                       </span>
@@ -657,11 +655,11 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                     {(u.region || u.branch) && (
                       <div className="pt-2 border-t border-sky-50/80 flex items-center justify-between text-[10px] text-sky-500 font-bold">
                         <span className="flex items-center gap-1 truncate max-w-[50%]">
-                          <MapPin className="w-3 h-3 text-sky-400 shrink-0" />
+                          <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                           <span className="truncate">{u.region || "-"}</span>
                         </span>
                         <span className="flex items-center gap-1 truncate max-w-[50%]">
-                          <Building className="w-3 h-3 text-sky-400 shrink-0" />
+                          <Building className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                           <span className="truncate">{u.branch || "-"}</span>
                         </span>
                       </div>
@@ -673,21 +671,21 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                 <div className="mt-5 pt-3 border-t border-sky-50/80 flex items-center justify-end gap-1">
                   <button
                     onClick={() => handleOpenEditForm(u)}
-                    className="p-2 text-sky-600 hover:text-sky-900 hover:bg-sky-50 rounded-lg transition-all cursor-pointer font-bold inline-flex items-center gap-1 text-[10px]"
-                    title="UBAH PROFIL / PASSWORD"
+                    className="p-2 text-sky-600 hover:text-sky-900 hover:bg-sky-55 rounded-lg transition-all cursor-pointer font-bold inline-flex items-center gap-1 text-[10px]"
+                    title="EDIT PROFILE / PASSWORD"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
-                    <span>Ubah</span>
+                    <span>Edit</span>
                   </button>
 
                   {!isSelf && u.username !== "admin" && (
                     <button
                       onClick={() => setDeleteTarget(u.username)}
                       className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-all cursor-pointer font-bold inline-flex items-center gap-1 text-[10px]"
-                      title="HAPUS AKUN"
+                      title="DELETE ACCOUNT"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                      <span>Hapus</span>
+                      <span>Delete</span>
                     </button>
                   )}
                 </div>
@@ -706,8 +704,8 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               <Globe className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-sky-950 font-sans tracking-tight">Integrasi Google Spreadsheet & Diagnostik Cloud</h2>
-              <p className="text-[11px] text-sky-500 font-bold uppercase tracking-wider">Khusus Administrator • Sinkronisasi Data Riil & Seeder</p>
+              <h2 className="text-base font-extrabold text-sky-950 font-sans tracking-tight">Google Spreadsheet Integration & Cloud Diagnostics</h2>
+              <p className="text-[11px] text-sky-500 font-bold uppercase tracking-wider font-sans">Administrator Only • Real-time Sync & Database Initialization</p>
             </div>
           </div>
           
@@ -715,12 +713,12 @@ export default function UsersView({ currentUser }: UsersViewProps) {
             {usingRealAppsScript ? (
               <>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Koneksi Google Sheets Aktif (Real Cloud)</span>
+                <span>Google Sheets Connection Active (Real Cloud)</span>
               </>
             ) : (
               <>
                 <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                <span>Mode Simulasi Lokal (Offline)</span>
+                <span>Local Simulation Mode (Offline)</span>
               </>
             )}
           </div>
@@ -735,27 +733,27 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               <div className="flex gap-2.5 items-start text-xs font-semibold text-sky-955">
                 <Layers className="w-5 h-5 text-indigo-600 shrink-0" />
                 <div>
-                  <h3 className="font-extrabold text-sky-900 text-xs">Pangkalan Data Google Sheet Baru / Kosong?</h3>
-                  <p className="text-[11px] text-sky-500 font-medium leading-relaxed mt-1">
-                    Jika Anda baru pertama kali menghubungkan Spreadsheet atau tidak sengaja menghapus datanya, gunakan tombol di bawah untuk menginisialisasi tabel MASTER_DATA dan menyematkan header kolom beserta akun demo awal.
+                  <h3 className="font-extrabold text-sky-900 text-xs text-left">New or Empty Google Sheet Database?</h3>
+                  <p className="text-[11px] text-sky-500 font-medium leading-relaxed mt-1 text-left">
+                    If you are connecting a spreadsheet for the first time or inadvertently cleared its contents, use the button below to initialize the MASTER_DATA tab, column mappings, and insert several initial demo accounts.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-3.5 pt-2">
+            <div className="space-y-3.5 pt-2 text-left">
               <button
                 type="button"
                 onClick={handleSeedRemote}
                 disabled={seeding}
                 className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs tracking-wide rounded-xl transition-all shadow-md shadow-indigo-600/15 cursor-pointer disabled:opacity-50"
               >
-                {seeding ? "Menginisialisasi / Seeding Cloud..." : "Inisialisasi / Seed Google Sheet"}
+                {seeding ? "Initializing / Seeding Cloud..." : "Initialize / Seed Google Sheet"}
               </button>
 
               {seedSuccess && (
                 <div className="text-[11px] font-semibold text-emerald-850 bg-emerald-50 p-3 border border-emerald-100 rounded-xl leading-relaxed flex items-start gap-2">
-                  <span className="text-emerald-500">✔</span>
+                  <span className="text-emerald-500 font-bold">✔</span>
                   <span>{seedSuccess}</span>
                 </div>
               )}
@@ -768,28 +766,28 @@ export default function UsersView({ currentUser }: UsersViewProps) {
               <div className="flex gap-2.5 items-start text-xs font-semibold text-sky-955">
                 <Activity className="w-5 h-5 text-sky-600 shrink-0" />
                 <div>
-                  <h3 className="font-extrabold text-sky-900 text-xs">Diagnostik Struktur & Analisis Lembar Kerja</h3>
-                  <p className="text-[11px] text-sky-500 font-medium leading-relaxed mt-1">
-                    Analisis konfigurasi spreadsheet internal Anda untuk memastikan baris data_type USER, SCHEDULE, dan laporan kunjungan VISIT sesuai dengan validasi skema database.
+                  <h3 className="font-extrabold text-sky-900 text-xs text-left">Worksheet Schema Diagnostics</h3>
+                  <p className="text-[11px] text-sky-500 font-medium leading-relaxed mt-1 text-left">
+                    Analyze the configuration of your target spreadsheet workbook to ensure USER, SCHEDULE, and VISIT reporting rows match our validated schemas.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 text-left">
               <button
                 type="button"
                 onClick={handleRunDiagnostics}
                 disabled={diagLoading}
-                className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-sky-50 border border-sky-200 text-sky-800 hover:text-sky-950 font-extrabold text-xs tracking-wide rounded-xl transition-all shadow-sm cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-1.5"
+                className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-sky-50 border border-sky-200 text-sky-800 hover:text-sky-955 font-extrabold text-xs tracking-wide rounded-xl transition-all shadow-sm cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-1.5"
               >
                 {diagLoading ? (
                   <>
                     <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-600" />
-                    <span>Menganalisis...</span>
+                    <span>Analyzing...</span>
                   </>
                 ) : (
-                  <span>Jalankan Diagnostik</span>
+                  <span>Run Diagnostics</span>
                 )}
               </button>
             </div>
@@ -799,25 +797,25 @@ export default function UsersView({ currentUser }: UsersViewProps) {
 
         {/* Diagnostics Results Rendering */}
         {diagError && (
-          <div className="bg-rose-50 border border-rose-100 rounded-2xl p-4 space-y-2">
+          <div className="bg-rose-50 border border-rose-100 rounded-2xl p-4 space-y-2 text-left">
             <div className="flex gap-2 items-start text-xs font-extrabold text-rose-955">
               <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-              <div>Analisis Diagnostik Cloud Menemukan Hambatan</div>
+              <div>Cloud Diagnostics Encountered an Issue</div>
             </div>
             <p className="text-[11px] text-rose-700 leading-relaxed font-semibold pl-7">
               Detail: {diagError}
             </p>
             {diagError.includes("action: diagnose") && (
               <div className="bg-white border border-rose-100 p-4 rounded-xl text-[11px] text-rose-900 leading-relaxed pl-4 space-y-2 mx-7">
-                <p className="font-black text-rose-950">💡 Solusi Pembaruan Kode Apps Script:</p>
-                <p>Kode Google Apps Script di Spreadsheet Anda sedang menggunakan versi lama.</p>
-                <p className="font-black text-sky-800">Cara memperbarui:</p>
+                <p className="font-black text-rose-950">💡 Apps Script Version Updates Required:</p>
+                <p>The deployed Google Apps Script in your Spreadsheet is running on an outdated schema.</p>
+                <p className="font-black text-sky-800">How to update manually:</p>
                 <ol className="list-decimal list-inside space-y-1">
-                  <li>Buka Google Spreadsheet Anda, arahkan ke <span className="font-bold">Extensions → Apps Script</span>.</li>
-                  <li>Ganti seluruh isi kode dengan kode terbaru dari file <span className="font-mono font-bold">apps_script.gs</span> di proyek ini.</li>
-                  <li>Tekan <span className="font-bold">Save (Ctrl+S / Cmd+S)</span>.</li>
-                  <li>Klik <span className="font-bold">Deploy → New Deployment</span>.</li>
-                  <li>Pilih jenis <span className="font-bold">Web app</span>, set <span className="font-bold">Who has access</span> ke <span className="font-bold">Anyone</span>, lalu klik Deploy.</li>
+                  <li>In Google Sheets, open the developer editor via <span className="font-bold">Extensions → Apps Script</span>.</li>
+                  <li>Replace all code in your editor with the script inside <span className="font-mono font-bold">apps_script.gs</span> from this workspace.</li>
+                  <li>Click <span className="font-bold">Save (Ctrl+S / Cmd+S)</span>.</li>
+                  <li>Click <span className="font-bold">Deploy → New Deployment</span>.</li>
+                  <li>Under type select <span className="font-bold">Web app</span>, set <span className="font-bold">Who has access</span> to <span className="font-bold">Anyone</span>, then tap Deploy.</li>
                 </ol>
               </div>
             )}
@@ -825,15 +823,15 @@ export default function UsersView({ currentUser }: UsersViewProps) {
         )}
 
         {diagData && (
-          <div className="bg-sky-50/10 border border-sky-100 rounded-2xl p-5 space-y-5 shadow-inner">
+          <div className="bg-sky-50/10 border border-sky-100 rounded-2xl p-5 space-y-5 shadow-inner text-left">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-4 border-b border-sky-100/60">
               <div>
-                <dt className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wide">Nama Spreadsheet</dt>
-                <dd className="text-sm font-black text-sky-950 mt-0.5 truncate">{diagData.spreadsheetName || "(Tanpa Nama)"}</dd>
+                <dt className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wide">Spreadsheet Title</dt>
+                <dd className="text-sm font-black text-sky-950 mt-0.5 truncate">{diagData.spreadsheetName || "(No Title)"}</dd>
               </div>
 
               <div>
-                <dt className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wide">Daftar Tab Sheet Terdeteksi</dt>
+                <dt className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wide">Detected Google Sheet Tabs</dt>
                 <dd className="flex flex-wrap gap-1 mt-1">
                   {diagData.sheets.map(name => (
                     <span
@@ -851,21 +849,21 @@ export default function UsersView({ currentUser }: UsersViewProps) {
                 {!diagData.masterDataExists && (
                   <p className="mt-1.5 flex gap-1 items-center text-[10px] font-bold text-rose-650">
                     <XCircle className="w-3.5 h-3.5" />
-                    <span>Lapor: Tab &apos;MASTER_DATA&apos; penting tidak terdeteksi!</span>
+                    <span>Warning: Crucial &apos;MASTER_DATA&apos; tab is missing!</span>
                   </p>
                 )}
               </div>
 
               <div>
-                <dt className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wide">Status Validitas Skema</dt>
+                <dt className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wide">Schema Validity Status</dt>
                 <dd className="mt-1.5">
                   {diagData.masterDataExists && diagData.dataTypeCounts.USER > 0 ? (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-bold text-[10px] border border-emerald-100">
-                      ✔ Format Spreadsheet Valid & Siap
+                      ✔ Spreadsheet Schema Valid & Ready
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-full font-bold text-[10px] border border-amber-100">
-                      ⚠ Perlu Penyesuaian / Seeding
+                      ⚠ Maintenance / Seeding Needed
                     </span>
                   )}
                 </dd>
@@ -874,35 +872,35 @@ export default function UsersView({ currentUser }: UsersViewProps) {
 
             {/* Counts breakdown */}
             <div>
-              <h3 className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wider mb-2.5">Jumlah Baris & Data Terbaca per Kategori</h3>
+              <h3 className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wider mb-2.5">Row Counts & Recognized Types</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div className="bg-white p-3 border border-sky-100/80 rounded-xl relative overflow-hidden">
-                  <div className="font-black text-sky-950 text-base">{diagData.dataTypeCounts.USER}</div>
-                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Akun User (USER)</div>
+                  <div className="font-black text-sky-955 text-base">{diagData.dataTypeCounts.USER}</div>
+                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">User Accounts (USER)</div>
                 </div>
                 <div className="bg-white p-3 border border-sky-100/80 rounded-xl relative overflow-hidden">
-                  <div className="font-black text-sky-950 text-base">{diagData.dataTypeCounts.SCHEDULE}</div>
-                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Jadwal Visit</div>
+                  <div className="font-black text-sky-955 text-base">{diagData.dataTypeCounts.SCHEDULE}</div>
+                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Visit Schedules</div>
                 </div>
                 <div className="bg-white p-3 border border-sky-100/80 rounded-xl relative overflow-hidden">
-                  <div className="font-black text-sky-950 text-base">{diagData.dataTypeCounts.VISIT}</div>
-                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Histori Laporan</div>
+                  <div className="font-black text-sky-955 text-base">{diagData.dataTypeCounts.VISIT}</div>
+                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Reports History</div>
                 </div>
                 <div className="bg-white p-3 border border-sky-100/80 rounded-xl relative overflow-hidden">
-                  <div className="font-black text-sky-950 text-base">{diagData.dataTypeCounts.OTHER}</div>
-                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Baris Lainnya</div>
+                  <div className="font-black text-sky-955 text-base">{diagData.dataTypeCounts.OTHER}</div>
+                  <div className="text-[9px] text-sky-450 font-extrabold uppercase tracking-wider mt-0.5">Other Row Records</div>
                 </div>
               </div>
             </div>
 
             {/* Accounts list (User Valid di Google Sheet) */}
             <div>
-              <h3 className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wider mb-2">Daftar Akun Terdaftar di Spreadsheet</h3>
+              <h3 className="text-[10px] text-sky-500 font-extrabold uppercase tracking-wider mb-2">Registered Accounts List (on Sheet)</h3>
               {diagData.dataTypeCounts.USER === 0 ? (
                 <div className="bg-amber-50/50 p-4 border border-amber-100 rounded-xl text-xs text-amber-900 leading-normal pl-4 font-semibold">
-                  <p className="font-bold">⚠️ Data Akun Kosong</p>
+                  <p className="font-bold">⚠️ Empty Account Records</p>
                   <p className="text-[11px] font-normal mt-0.5 text-amber-800">
-                    Tidak terdeteksi adanya akun master data di Spreadsheet Anda. Silakan isi baris master_data di lembar kerja Anda atau klik tombol seeder di atas.
+                    No user accounts are recognized on the target Google Sheet. Please insert row values in your sheet or click the database initializer button above.
                   </p>
                 </div>
               ) : (

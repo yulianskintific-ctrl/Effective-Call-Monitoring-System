@@ -228,9 +228,9 @@ export default function VisitView({ currentUser, setActivePage }: VisitViewProps
               <AlertCircle className="w-5 h-5 animate-pulse" />
             </div>
             <div className="text-left">
-              <h4 className="font-extrabold text-xs text-rose-950 font-sans tracking-tight">Pemberitahuan Laporan Kunjungan Ditolak</h4>
+              <h4 className="font-extrabold text-xs text-rose-955 font-sans tracking-tight">Notification of Rejected Visit Report</h4>
               <p className="text-[11px] text-rose-700 font-medium leading-relaxed mt-0.5">
-                Ada <strong>{submittedVisits.filter(v => v.approval_status === "REJECTED").length} laporan kunjungan toko</strong> yang ditolak oleh supervisor. Anda dapat memperbaiki dan mengajukannya kembali lewat Menu Revisi.
+                There are <strong>{submittedVisits.filter(v => v.approval_status === "REJECTED").length} store visit reports</strong> rejected by your supervisor. You can edit and re-submit them from the Revision menu.
               </p>
             </div>
           </div>
@@ -240,7 +240,7 @@ export default function VisitView({ currentUser, setActivePage }: VisitViewProps
               onClick={() => setActivePage("revision")}
               className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[11px] rounded-xl transition-all cursor-pointer shadow-sm shrink-0 uppercase tracking-wide inline-flex items-center gap-1"
             >
-              Revisi Sekarang &rarr;
+              Revise Now &rarr;
             </button>
           )}
         </div>
@@ -325,8 +325,8 @@ export default function VisitView({ currentUser, setActivePage }: VisitViewProps
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-0">
                   {/* Photo upload container */}
                   <div className="space-y-3 min-w-0 w-full">
-                    <label className="block text-xs font-bold text-sky-800 uppercase tracking-wider">
-                      Store Shelf Photo (Wajib Upload)
+                    <label className="block text-xs font-bold text-sky-850 uppercase tracking-wider">
+                      Store Shelf Photo (Upload Mandatory)
                     </label>
 
                     {photoUrl ? (
