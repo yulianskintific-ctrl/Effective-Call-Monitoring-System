@@ -4,6 +4,7 @@ import { SEED_RECORDS } from "./mockData";
 // LocalStorage Keys
 const DB_KEY = "EC_MONITOR_DB_RECORDS";
 const API_URL_KEY = "EC_MONITOR_API_URL";
+const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUF6V-XN9xKC0UpqlmSKk8bowmfVrfgxvShwZcdfb50ApV1UWU-82114qrVZStk1TCFQ/exec";
 
 /**
  * Initialize database with seed records if empty
@@ -71,8 +72,8 @@ export async function checkCloudConnection(): Promise<boolean> {
     return cachedCloudMode;
   }
 
-  // 1. Check client-side direct config (e.g., environment variable or localStorage for Vercel)
-  const clientUrl = ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL");
+  // 1. Check client-side direct config (e.g., environment variable, localStorage, or compiled default fallback for Vercel)
+  const clientUrl = ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL") || DEFAULT_APPS_SCRIPT_URL;
   if (clientUrl && clientUrl.trim().startsWith("https://script.google.com/")) {
     cachedCloudMode = true;
     return true;
@@ -99,7 +100,7 @@ export function isCloudMode(): boolean {
  * Get configured Apps Script URL
  */
 export function getAppsScriptUrl(): string {
-  return ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL") || "";
+  return ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL") || DEFAULT_APPS_SCRIPT_URL;
 }
 
 /**
@@ -120,7 +121,7 @@ export function saveAppsScriptUrl(url: string) {
  */
 async function callAppsScript(action: string, data: any = {}, quiet: boolean = false): Promise<any> {
   // Check if a direct client-side connection is available
-  const clientUrl = ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL");
+  const clientUrl = ((import.meta as any).env).VITE_APPS_SCRIPT_URL || localStorage.getItem("VITE_APPS_SCRIPT_URL") || DEFAULT_APPS_SCRIPT_URL;
   
   if (clientUrl && clientUrl.trim().startsWith("https://script.google.com/")) {
     try {
