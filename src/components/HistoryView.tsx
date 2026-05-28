@@ -137,33 +137,49 @@ export default function HistoryView({ currentUser }: HistoryViewProps) {
       </div>
 
       {/* Primary search parameters & status buttons */}
-      <div className="bg-white rounded-2xl border border-sky-100 p-5 shadow-sm space-y-4 w-full min-w-0">
-        <div className="flex flex-col lg:flex-row gap-3 w-full min-w-0">
-          <div className="relative flex-1 min-w-0">
-            <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-sky-400 shrink-0" />
+      <div className="bg-white rounded-2xl border border-sky-100 p-6 shadow-sm space-y-5 w-full min-w-0">
+        {/* Search Input Row */}
+        <div className="w-full">
+          <label className="block text-xs font-extrabold text-sky-850 uppercase tracking-wider mb-2">
+            Search Visits
+          </label>
+          <div className="relative w-full">
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-sky-400 shrink-0" />
             <input
               type="text"
               placeholder="Search store name, ID code, salesperson username..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-sky-205 rounded-xl focus:ring-2 focus:ring-sky-550 focus:outline-none text-xs text-sky-950 font-semibold bg-sky-50/5 placeholder-sky-305"
+              className="w-full pl-10 pr-4 py-2.5 border border-sky-100 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none text-xs text-sky-950 font-semibold bg-sky-50/10 placeholder-sky-400 transition-all"
             />
           </div>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <span className="text-xs font-bold text-sky-805 mr-1 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5 text-sky-600" /> Filter Status:
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {ALL_STATUSES.map((st) => (
-                <button
-                  key={st.value}
-                  onClick={() => setSelectedStatus(st.value)}
-                  className={`text-[10px] px-2.5 py-1.5 font-bold rounded-lg border transition-all cursor-pointer ${selectedStatus === st.value ? "bg-sky-600 border-sky-600 text-white shadow-sm shadow-sky-500/10" : "bg-white border-sky-100 text-sky-800 hover:bg-sky-50"}`}
-                >
-                  {st.label}
-                </button>
-              ))}
+        {/* Status Filters Row */}
+        <div className="w-full pt-4 border-t border-sky-100/50">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-1.5 text-xs font-extrabold text-sky-850 uppercase tracking-wider">
+              <Filter className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+              <span>Filter Status</span>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 w-full">
+              {ALL_STATUSES.map((st) => {
+                const isSelected = selectedStatus === st.value;
+                return (
+                  <button
+                    key={st.value}
+                    onClick={() => setSelectedStatus(st.value)}
+                    className={`text-[11px] px-3.5 py-2 font-bold rounded-xl border transition-all cursor-pointer whitespace-nowrap leading-none ${
+                      isSelected 
+                        ? "bg-sky-600 border-sky-600 text-white shadow-md shadow-sky-600/10" 
+                        : "bg-sky-50/50 border-sky-100 text-sky-850 hover:bg-sky-50 hover:border-sky-200"
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
